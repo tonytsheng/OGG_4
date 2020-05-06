@@ -1,0 +1,14 @@
+dblogin useridalias ogg_admin_dev01
+add extract pump1, exttrailsource ./dirdat/E1
+add rmttrail ./dirdat/P1, extract pump1
+start pump1
+
+dblogin useridalias ogg_admin_dev02
+add extract pump2, exttrailsource ./dirdat/E2
+add rmttrail ./dirdat/P2, extract pump2
+start pump2
+
+dblogin useridalias ogg_admin_dev03
+add extract pump3, exttrailsource ./dirdat/E3 
+add rmttrail ./dirdat/P3, extract pump3
+start pump3
