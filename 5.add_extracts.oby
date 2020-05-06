@@ -1,0 +1,17 @@
+dblogin useridalias ogg_admin_dev01
+register extract ext1 database
+add extract ext1 integrated tranlog, begin now 
+add exttrail ./dirdat/E1, extract ext1
+start extract ext1
+
+dblogin useridalias ogg_admin_dev02
+register extract ext2 database
+add extract ext2 integrated tranlog, begin now 
+add exttrail ./dirdat/E2, extract ext2
+start extract ext2
+
+dblogin useridalias ogg_admin_dev03
+register extract ext3 database
+add extract ext3 integrated tranlog, begin now 
+add exttrail ./dirdat/E3, extract ext3
+start extract ext3
