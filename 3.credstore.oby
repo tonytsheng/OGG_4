@@ -1,0 +1,6 @@
+add credentialstore
+alter credentialstore add user ogg_admin@dev01, password ogg_admin alias ogg_admin_dev01;
+alter credentialstore add user ogg_admin@dev02 ,password ogg_admin alias ogg_admin_dev02;
+alter credentialstore add user ogg_admin@dev03 ,password ogg_admin alias ogg_admin_dev03;
+alter credentialstore add user ogg_admin@dev04 ,password ogg_admin alias ogg_admin_dev04;
+alter credentialstore add user ogg_admin@devrpt ,password ogg_admin alias ogg_admin_devrpt;
