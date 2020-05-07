@@ -1,0 +1,52 @@
+print_msg() {
+  echo "+-----+-----+-----+-----+"
+  echo `date +%Y%m%d.%H%M%S` $1
+  echo "+-----+-----+-----+-----+"
+}
+
+get_numtables(){
+  USER=$1
+  PASSWORD=$2
+  SID=$3
+  NUMROWS=`sqlplus -S ${USER}/${PASSWORD}@${SID}<<EQ | sed '/^$/d' | egrep -v 'rows|----|COUNT'
+set linesize 200
+col table_name format a30
+select count(*) from channels;
+EQ`
+  return ${NUMROWS}
+}
+
+pop_tablist_count(){
+  USER=$1
+  PASSWORD=$2
+  SID=$3
+  sqlplus -S ${USER}/${PASSWORD}@${SID}<<EQ | sed '/^$/d' | egrep -v 'rows|----|TABLE' > tablistandcount.${SID}.$$
+set linesize 200
+col table_name format a30
+select table_name||':'||num_rows from user_tables order by 1;
+EQ
+cat tablistandcount.${SID}.$$
+count=1
+awk -F':' '{print $1" " $2}' tablistandcount.${SID}.$$ | while read tab numrows
+do
+  eval `tablistandcount.[${SID}][${tab}]=${numrows}`
+done
+# rm tablistandcount.${SID}.$$
+}
+
+
+declare -A tablistandcount
+
+DBA_SSI=/home/oracle/tsheng/SSI/ssi.dba
+REP_SSI=/home/oracle/tsheng/SSI/ssi.rep
+while read PRIHOST PRISID PRISCHEMA PRIPW REPHOST REPSID REPSCHEMA REPPW
+do
+  get_numtables ${PRISCHEMA} ${PRIPW} ${PRISID}
+  PRIROWS=$?
+  get_numtables ${REPSCHEMA} ${REPPW} ${REPSID}
+  REPROWS=$?
+  print_msg "${PRISID}: ${PRIROWS} -- ${REPSID}: ${REPROWS} "
+#   pop_tablist_count ${PRISCHEMA} ${PRIPW} ${PRISID}
+
+done < <(grep -v '#' ${REP_SSI} | awk -F':' '{print $1" "$2" "$3" "$4" "$5" "$6" "$7" "$8}' )
+
