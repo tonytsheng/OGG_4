@@ -1,0 +1,205 @@
+::::::::::::::
+drext2.prm
+::::::::::::::
+EXTRACT drext2
+SETENV (ORACLE_SID = drmdev01)
+USERIDALIAS ogg_admin_drmdev01
+EXTTRAIL ./dirdat/DR
+TABLE appowner.*;
+::::::::::::::
+drpump.prm
+::::::::::::::
+extract drpump
+useridalias ogg_admin_drmdev01
+rmthost wcp12cr2, mgrport 7809
+rmttrail ./dirdat/DP
+table appowner.*;
+::::::::::::::
+ext1.prm
+::::::::::::::
+EXTRACT ext1
+SETENV (ORACLE_SID = dev01)
+USERIDALIAS ogg_admin_dev01
+TRANLOGOPTIONS EXCLUDETAG 01
+EXTTRAIL ./dirdat/E1
+TABLE appowner.*;
+::::::::::::::
+ext2.prm
+::::::::::::::
+EXTRACT ext2
+SETENV (ORACLE_SID = dev02)
+USERIDALIAS ogg_admin_dev02
+TRANLOGOPTIONS EXCLUDETAG 02
+EXTTRAIL ./dirdat/E2
+TABLE appowner.*;
+::::::::::::::
+ext3.prm
+::::::::::::::
+EXTRACT ext3
+SETENV (ORACLE_SID = dev03)
+USERIDALIAS ogg_admin_dev03
+TRANLOGOPTIONS EXCLUDETAG 03
+EXTTRAIL ./dirdat/E3
+TABLE appowner.*;
+::::::::::::::
+mgr.prm
+::::::::::::::
+PORT 7809
+AUTOSTART ER *
+PURGEOLDEXTRACTS ./dirdat/*, USECHECKPOINTS, MinKeepHours 6
+::::::::::::::
+orext1.prm
+::::::::::::::
+EXTRACT orext1
+SETENV (ORACLE_SID = orcl)
+USERIDALIAS ogg_admin_orcl
+EXTTRAIL ./dirdat/OR
+TABLE appowner.*;
+::::::::::::::
+orpump.prm
+::::::::::::::
+extract orpump
+useridalias ogg_admin_drmdev01
+rmthost wcp12cr2, mgrport 7809
+rmttrail ./dirdat/PO
+table appowner.*;
+::::::::::::::
+pump1.prm
+::::::::::::::
+extract pump1
+useridalias ogg_admin_dev01
+rmthost wcp12cr2, mgrport 7809
+rmttrail ./dirdat/P1
+table appowner.*;
+::::::::::::::
+pump2.prm
+::::::::::::::
+extract pump2
+useridalias ogg_admin_dev02
+rmthost wcp12cr2, mgrport 7809
+rmttrail ./dirdat/P2
+table appowner.*;
+::::::::::::::
+pump3.prm
+::::::::::::::
+extract pump3
+useridalias ogg_admin_dev03
+rmthost wcp12cr2, mgrport 7809
+rmttrail ./dirdat/P3
+table appowner.*;
+::::::::::::::
+rep1.prm
+::::::::::::::
+replicat rep1
+setenv (ORACLE_SID='drmdev01')
+useridalias ogg_admin_drmdev01
+handlecollisions
+discardfile ./dirrpt/reperr.dsc, purge
+map appowner.*, TARGET appowner.*;
+::::::::::::::
+rep1rpt.prm
+::::::::::::::
+replicat rep1rpt
+setenv (ORACLE_SID='devrpt')
+useridalias ogg_admin_devrpt
+ASSUMETARGETDEFS
+handlecollisions
+discardfile ./dirrpt/rep1rpt.dsc, purge
+map appowner.*, TARGET appowner.*;
+::::::::::::::
+rep1to2.prm
+::::::::::::::
+replicat rep1to2
+setenv (ORACLE_SID='dev02')
+useridalias ogg_admin_dev02
+DBOPTIONS SETTAG 02
+handlecollisions
+discardfile ./dirrpt/rep1to2.dsc, purge
+map appowner.*, TARGET appowner.*;
+::::::::::::::
+rep1to3.prm
+::::::::::::::
+replicat rep1to3
+setenv (ORACLE_SID='dev03')
+useridalias ogg_admin_dev03
+DBOPTIONS SETTAG 03
+handlecollisions
+discardfile ./dirrpt/rep1to3.dsc, purge
+map appowner.*, TARGET appowner.*;
+::::::::::::::
+rep1to4.prm
+::::::::::::::
+replicat rep1to4
+setenv (ORACLE_SID='dev04')
+useridalias ogg_admin_dev04
+DBOPTIONS SETTAG 04
+handlecollisions
+discardfile ./dirrpt/rep1to4.dsc, purge
+map appowner.*, TARGET appowner.*;
+::::::::::::::
+rep2.prm
+::::::::::::::
+replicat rep2
+setenv (ORACLE_SID='orcl')
+useridalias ogg_admin_orcl
+handlecollisions
+discardfile ./dirrpt/reperr_orcl.dsc, purge
+map appowner.*, TARGET appowner.*;
+::::::::::::::
+rep2rpt.prm
+::::::::::::::
+replicat rep2rpt
+setenv (ORACLE_SID='devrpt')
+useridalias ogg_admin_devrpt
+handlecollisions
+discardfile ./dirrpt/rep2rpt.dsc, purge
+map appowner.*, TARGET appowner.*;
+::::::::::::::
+rep2to1.prm
+::::::::::::::
+replicat rep2to1
+setenv (ORACLE_SID='dev01')
+useridalias ogg_admin_dev01
+DBOPTIONS SETTAG 01
+handlecollisions
+discardfile ./dirrpt/rep2to1.dsc, purge
+map appowner.*, TARGET appowner.*;
+::::::::::::::
+rep2to3.prm
+::::::::::::::
+replicat rep2to3
+setenv (ORACLE_SID='dev03')
+useridalias ogg_admin_dev03
+DBOPTIONS SETTAG 03
+handlecollisions
+discardfile ./dirrpt/rep2to3.dsc, purge
+map appowner.*, TARGET appowner.*;
+::::::::::::::
+rep3rpt.prm
+::::::::::::::
+replicat rep3rpt
+setenv (ORACLE_SID='devrpt')
+useridalias ogg_admin_devrpt
+handlecollisions
+discardfile ./dirrpt/rep3rpt.dsc, purge
+map appowner.*, TARGET appowner.*;
+::::::::::::::
+rep3to1.prm
+::::::::::::::
+replicat rep3to1
+setenv (ORACLE_SID='dev01')
+useridalias ogg_admin_dev01
+DBOPTIONS SETTAG 01
+handlecollisions
+discardfile ./dirrpt/rep3to1.dsc, purge
+map appowner.*, TARGET appowner.*;
+::::::::::::::
+rep3to2.prm
+::::::::::::::
+replicat rep3to2
+setenv (ORACLE_SID='dev02')
+useridalias ogg_admin_dev02
+DBOPTIONS SETTAG 02
+handlecollisions
+discardfile ./dirrpt/rep3to2.dsc, purge
+map appowner.*, TARGET appowner.*;
