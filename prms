@@ -48,22 +48,6 @@ PORT 7809
 AUTOSTART ER *
 PURGEOLDEXTRACTS ./dirdat/*, USECHECKPOINTS, MinKeepHours 6
 ::::::::::::::
-orext1.prm
-::::::::::::::
-EXTRACT orext1
-SETENV (ORACLE_SID = orcl)
-USERIDALIAS ogg_admin_orcl
-EXTTRAIL ./dirdat/OR
-TABLE appowner.*;
-::::::::::::::
-orpump.prm
-::::::::::::::
-extract orpump
-useridalias ogg_admin_drmdev01
-rmthost wcp12cr2, mgrport 7809
-rmttrail ./dirdat/PO
-table appowner.*;
-::::::::::::::
 pump1.prm
 ::::::::::::::
 extract pump1
@@ -88,15 +72,6 @@ rmthost wcp12cr2, mgrport 7809
 rmttrail ./dirdat/P3
 table appowner.*;
 ::::::::::::::
-rep1.prm
-::::::::::::::
-replicat rep1
-setenv (ORACLE_SID='drmdev01')
-useridalias ogg_admin_drmdev01
-handlecollisions
-discardfile ./dirrpt/reperr.dsc, purge
-map appowner.*, TARGET appowner.*;
-::::::::::::::
 rep1rpt.prm
 ::::::::::::::
 replicat rep1rpt
@@ -105,6 +80,7 @@ useridalias ogg_admin_devrpt
 ASSUMETARGETDEFS
 handlecollisions
 discardfile ./dirrpt/rep1rpt.dsc, purge
+colmatch names site_sid = sid
 map appowner.*, TARGET appowner.*;
 ::::::::::::::
 rep1to2.prm
@@ -127,25 +103,6 @@ handlecollisions
 discardfile ./dirrpt/rep1to3.dsc, purge
 map appowner.*, TARGET appowner.*;
 ::::::::::::::
-rep1to4.prm
-::::::::::::::
-replicat rep1to4
-setenv (ORACLE_SID='dev04')
-useridalias ogg_admin_dev04
-DBOPTIONS SETTAG 04
-handlecollisions
-discardfile ./dirrpt/rep1to4.dsc, purge
-map appowner.*, TARGET appowner.*;
-::::::::::::::
-rep2.prm
-::::::::::::::
-replicat rep2
-setenv (ORACLE_SID='orcl')
-useridalias ogg_admin_orcl
-handlecollisions
-discardfile ./dirrpt/reperr_orcl.dsc, purge
-map appowner.*, TARGET appowner.*;
-::::::::::::::
 rep2rpt.prm
 ::::::::::::::
 replicat rep2rpt
@@ -153,6 +110,7 @@ setenv (ORACLE_SID='devrpt')
 useridalias ogg_admin_devrpt
 handlecollisions
 discardfile ./dirrpt/rep2rpt.dsc, purge
+colmatch names site_sid = sid
 map appowner.*, TARGET appowner.*;
 ::::::::::::::
 rep2to1.prm
@@ -182,6 +140,7 @@ setenv (ORACLE_SID='devrpt')
 useridalias ogg_admin_devrpt
 handlecollisions
 discardfile ./dirrpt/rep3rpt.dsc, purge
+colmatch names site_sid = sid
 map appowner.*, TARGET appowner.*;
 ::::::::::::::
 rep3to1.prm
