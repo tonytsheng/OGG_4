@@ -1,20 +1,4 @@
 ::::::::::::::
-drext2.prm
-::::::::::::::
-EXTRACT drext2
-SETENV (ORACLE_SID = drmdev01)
-USERIDALIAS ogg_admin_drmdev01
-EXTTRAIL ./dirdat/DR
-TABLE appowner.*;
-::::::::::::::
-drpump.prm
-::::::::::::::
-extract drpump
-useridalias ogg_admin_drmdev01
-rmthost wcp12cr2, mgrport 7809
-rmttrail ./dirdat/DP
-table appowner.*;
-::::::::::::::
 ext1.prm
 ::::::::::::::
 EXTRACT ext1
