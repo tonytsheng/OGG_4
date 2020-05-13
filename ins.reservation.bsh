@@ -1,5 +1,42 @@
 SID=$1
 
+array[1]="DTW"
+array[2]="DFW"
+array[3]="IAD"
+array[4]="LHR"
+array[5]="MUC"
+array[6]="MRS"
+array[7]="LIS"
+array[8]="DBV"
+array[9]="VCE"
+array[10]="ATH"
+array[11]="PHL"
+array[12]="MCO"
+array[13]="LAX"
+array[14]="SAT"
+array[15]="DEN"
+array[16]="FLL"
+array[17]="VIE"
+array[18]="CTA"
+array[19]="WAW"
+array[20]="CDG"
+array[21]="HGK"
+array[22]="CPT"
+array[23]="SYD"
+array[24]="AUH"
+array[25]="IAH"
+array[26]="LGA"
+array[0]="KEF"
+
+size=${#array[@]}
+index=$(($RANDOM % $size))
+dep=`echo ${array[$index]}`
+
+size=${#array[@]}
+index=$(($RANDOM % $size))
+arr=`echo ${array[$index]}`
+#echo ${dep} " : " ${arr}
+
 lname=`head /dev/urandom | tr -dc A-Z | head -c10`
 fname=`head /dev/urandom | tr -dc A-Z | head -c10`
 seatnumber=`echo $RANDOM %25 | head -c2`
@@ -18,6 +55,8 @@ values
   '${fname}',
   '${seatnumber}${seatletter}',
   '${flightcarrier}${flightno}',
+   '${dep}',
+  '${arr}',
   sysdate);
 commit;
 EQ
