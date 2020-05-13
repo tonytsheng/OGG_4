@@ -1,0 +1,23 @@
+SID=$1
+
+lname=`head /dev/urandom | tr -dc A-Z | head -c10`
+fname=`head /dev/urandom | tr -dc A-Z | head -c10`
+seatnumber=`echo $RANDOM %25 | head -c2`
+seatletter=`head /dev/urandom | tr -dc A-G | head -c1`
+flightcarrier=`head /dev/urandom | tr -dc A-Z | head -c2`
+flightno=`echo $RANDOM | head -c3`
+
+#echo ${lname} " : " ${fname} " : " ${flightcarrier} " : " ${flightno}
+
+sqlplus -S appowner/appowner@${SID} <<EQ
+insert into
+reservation
+values 
+( ( select max(id) from reservation) + 1,
+  '${lname}',
+  '${fname}',
+  '${seatnumber}${seatletter}',
+  '${flightcarrier}${flightno}',
+  sysdate);
+commit;
+EQ
