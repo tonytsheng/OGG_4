@@ -35,7 +35,6 @@ dep=`echo ${array[$index]}`
 size=${#array[@]}
 index=$(($RANDOM % $size))
 arr=`echo ${array[$index]}`
-#echo ${dep} " : " ${arr}
 
 lname=`head /dev/urandom | tr -dc A-Z | head -c10`
 fname=`head /dev/urandom | tr -dc A-Z | head -c10`
