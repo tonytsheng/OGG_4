@@ -1,0 +1,1 @@
+./runInstaller -responsefile /oracle/software/OGG/fbo_ggs_Linux_x64_shiphome/Disk1/oggcore.rsp -silent
