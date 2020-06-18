@@ -1,0 +1,73 @@
+# dynamic compare rowcounts
+
+REPFILE=$1
+#PRIHOST:PRIDB:PRIUSER:PW:GGHOME:REPHOST:REPDB:REPUSER
+
+PRIDB=`grep -v '#' ${REPFILE} | awk -F':' '{print $2}'`
+REPDB=`grep -v '#' ${REPFILE} | awk -F':' '{print $7}'`
+PRIUSER=`grep -v '#' ${REPFILE} | awk -F':' '{print $3}'`
+REPUSER=`grep -v '#' ${REPFILE} | awk -F':' '{print $8}'`
+
+# password stuff - you may not want to do this
+PRIPW=`cat .password`
+REPPW=`cat .password`
+
+echo "::: PRIDB - ${PRIDB}"
+echo "::: REPDB - ${REPDB}"
+echo "::: PRIUSER - ${PRIUSER}"
+echo "::: REPUSER - ${REPUSER}"
+
+for sid in ${PRIDB} ${REPDB};do
+sqlplus -S ${PRIUSER}/${PRIDB}@${sid} <<EQ | egrep -v '\--|rows|COUNT|PL/\SQL' | sed '/^$/d' > /tmp/t1.${sid}.$$
+set serveroutput on;
+declare val number;
+begin
+  for t in (select table_name from user_tables order by table_name) loop
+    execute immediate 'select count(*) from ' || t.table_name into val;
+    dbms_output.put_line (val || ' ' || t.table_name);
+  end loop;
+end;
+/
+exit
+EQ
+done
+
+declare -A COUNT
+declare -A TABLE
+declare -A TOTAL
+
+for sid in ${PRIDB} ${REPDB};do
+  TOTAL[${sid}]=`wc -l /tmp/t1.${sid}.$$ | awk -F' ' '{print $1}'`
+done
+
+# make sure tablecounts are the same
+if [ ${TOTAL[${PRIDB}]} - ne ${TOTAL[${REPDB}]} ];then
+  echo "Table counts do not match"
+  echo "Address this and run the compare again"
+  echo "See diff"
+  sdiff /tmp/t1.${PRIDB}.$$ /tmp/t1.${REPDB}.$$
+  exit
+fi
+
+# get count of tables
+# populate array of count of each table per sid
+for sid in ${PRIDB} ${REPDB};do
+  counter=1
+  while read rowcount table;do
+    TABLE[${counter}]=$table
+    COUNT[${sid},${table}]=$rowcount
+    let counter ++
+  done < <( awk -F' ' '{print $1" "$2}' /tmp/t1.${sid}.$$ )
+done
+
+for (( t=1; t<= ${TOTAL[${PRIDB}]}; t++));do
+  if [ ${COUNT[${PRIDB},${TABLE[${T}]}]} -ne ${COUNT[${REPDB},${TABLE[${T}]}]} ];then
+    echo "${PRIDB}=${COUNT[${PRIDB},${TABLE[${t}]}]} :: ${REPDB}=${COUNT[${REPDB},${TABLE[${t}]}]} <---"
+  else
+    echo "${PRIDB}=${COUNT[${PRIDB},${TABLE[${t}]}]} :: ${REPDB}=${COUNT[${REPDB},${TABLE[${t}]}]} "
+  fi
+done
+
+rm /tmp/t1.${PRIDB}.$$
+rm /tmp/t1.${REPDB}.$$
+  
