@@ -1,4 +1,4 @@
-Error:
+Error in OGG log:
 TCP/IP error 113 (No route to host), endpoint: hostname:port
 
 /etc/sysconfig/iptables
